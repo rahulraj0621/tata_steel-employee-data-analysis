@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tata Steel - Employee Utilization Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #1f4e79, #2e7d8f);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #1f4e79;
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1f4e79;
+            margin-bottom: 10px;
+        }
+        
+        .metric-label {
+            font-size: 1rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section h2 {
+            color: #1f4e79;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #1f4e79;
+            padding-bottom: 10px;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .insights {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        .insights h3 {
+            color: #1f4e79;
+            margin-bottom: 20px;
+        }
+        
+        .insights ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .insights li {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+        
+        .insights li:before {
+            content: "✓";
+            color: #2E8B57;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .footer {
+            background: #1f4e79;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏭 Tata Steel Employee Utilization Dashboard</h1>
+            <p>Comprehensive Analysis of Employee Training and Development Performance</p>
+        </div>
+        
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-value">1,409</div>
+                <div class="metric-label">Total Employees</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">291</div>
+                <div class="metric-label">Available Courses</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">26.2%</div>
+                <div class="metric-label">Completion Rate</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">38.1%</div>
+                <div class="metric-label">Avg Utilization</div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>📊 Utilization Analysis</h2>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <div id="utilizationDist"></div>
+                    </div>
+                    <div class="chart-container">
+                        <div id="divisionUtil"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>✅ Completion Analysis</h2>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <div id="completionPie"></div>
+                    </div>
+                    <div class="chart-container">
+                        <div id="programCompletion"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>⏰ Learning Hours Analysis</h2>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <div id="learningHours"></div>
+                    </div>
+                    <div class="chart-container">
+                        <div id="hoursVsDuration"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="insights">
+                <h3>💡 Key Insights & Recommendations</h3>
+                <ul>
+                    <li><strong>Overall Completion Rate:</strong> 26.2% - Indicates need for improved engagement strategies</li>
+                    <li><strong>Average Utilization:</strong> 38.1% - Shows moderate efficiency in learning time usage</li>
+                    <li><strong>Top Performing Division:</strong> Division_Q with highest utilization rates</li>
+                    <li><strong>Most Popular Course:</strong> "Data – What It Is What We Can Do With It" with 1,013 enrollments</li>
+                    <li><strong>Learning Efficiency:</strong> Employees spend average 2.97 hours on courses with 7.79 hour duration</li>
+                    <li><strong>Department Performance:</strong> Department_9 leads with 329 enrollments</li>
+                </ul>
+                
+                <h3 style="margin-top: 30px;">📋 Strategic Recommendations</h3>
+                <ul>
+                    <li><strong>Focus on Low-Performing Divisions:</strong> Implement targeted training programs for divisions with low completion rates</li>
+                    <li><strong>Optimize Course Duration:</strong> Align course duration with actual learning time requirements</li>
+                    <li><strong>Enhance Engagement:</strong> Develop more interactive learning modules to improve completion rates</li>
+                    <li><strong>Monitor Progress:</strong> Implement regular progress tracking systems for better oversight</li>
+                    <li><strong>Skill Development Focus:</strong> Prioritize courses with high skill development impact</li>
+                    <li><strong>Time Management:</strong> Provide better time management tools for employees</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer">
+            🏭 Tata Steel Employee Utilization Dashboard | Last Updated: January 2025
+        </div>
+    </div>
+
+    <script>
+        // Sample data for visualizations
+        const utilizationData = {
+            x: [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100],
+            y: [150, 200, 250, 300, 350, 400, 450, 500, 450, 400, 350, 300, 250, 200, 150, 100, 50],
+            type: 'bar',
+            marker: {color: '#667eea'},
+            name: 'Utilization Rate Distribution'
+        };
+
+        const divisionData = {
+            x: [85, 82, 78, 75, 72, 70, 68, 65, 62, 60],
+            y: ['Division_Q', 'Division_I', 'Division_P', 'Division_A', 'Division_B', 'Division_C', 'Division_D', 'Division_E', 'Division_F', 'Division_G'],
+            type: 'bar',
+            orientation: 'h',
+            marker: {color: '#764ba2'},
+            name: 'Division Utilization'
+        };
+
+        const completionData = {
+            values: [675, 1063],
+            labels: ['Completed', 'In Progress'],
+            type: 'pie',
+            marker: {colors: ['#2E8B57', '#FF6B6B']},
+            name: 'Completion Status'
+        };
+
+        const programData = {
+            x: [85, 80, 75, 70, 65, 60, 55, 50, 45, 40],
+            y: ['Analytics-Basic', 'Blockchain', 'Project Mgmt', 'Data Science', 'AI/ML', 'Cybersecurity', 'Leadership', 'Finance', 'Operations', 'Marketing'],
+            type: 'bar',
+            orientation: 'h',
+            marker: {color: '#1f4e79'},
+            name: 'Program Completion'
+        };
+
+        const learningHoursData = {
+            x: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 25, 30, 35, 40],
+            y: [50, 100, 200, 300, 400, 350, 300, 250, 200, 150, 100, 80, 60, 40, 20],
+            type: 'bar',
+            marker: {color: '#2e7d8f'},
+            name: 'Learning Hours Distribution'
+        };
+
+        const hoursVsDurationData = {
+            x: [2, 4, 6, 8, 10, 12, 15, 18, 20, 25, 30, 35, 40, 45, 49],
+            y: [1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 18, 22, 25, 30, 35],
+            mode: 'markers',
+            type: 'scatter',
+            marker: {
+                size: 8,
+                color: ['#2E8B57', '#FF6B6B'],
+                opacity: 0.7
+            },
+            name: 'Hours vs Duration'
+        };
+
+        // Create plots
+        Plotly.newPlot('utilizationDist', [utilizationData], {
+            title: 'Distribution of Utilization Rates',
+            xaxis: {title: 'Utilization Rate (%)'},
+            yaxis: {title: 'Number of Employees'},
+            margin: {t: 50, b: 50, l: 60, r: 30}
+        });
+
+        Plotly.newPlot('divisionUtil', [divisionData], {
+            title: 'Average Utilization by Division (Top 10)',
+            xaxis: {title: 'Utilization Rate (%)'},
+            yaxis: {title: 'Division'},
+            margin: {t: 50, b: 50, l: 100, r: 30}
+        });
+
+        Plotly.newPlot('completionPie', [completionData], {
+            title: 'Course Completion Status',
+            margin: {t: 50, b: 50, l: 30, r: 30}
+        });
+
+        Plotly.newPlot('programCompletion', [programData], {
+            title: 'Completion Rate by Program (Top 10)',
+            xaxis: {title: 'Completion Rate (%)'},
+            yaxis: {title: 'Program Name'},
+            margin: {t: 50, b: 50, l: 120, r: 30}
+        });
+
+        Plotly.newPlot('learningHours', [learningHoursData], {
+            title: 'Distribution of Learning Hours Spent',
+            xaxis: {title: 'Hours'},
+            yaxis: {title: 'Number of Employees'},
+            margin: {t: 50, b: 50, l: 60, r: 30}
+        });
+
+        Plotly.newPlot('hoursVsDuration', [hoursVsDurationData], {
+            title: 'Learning Hours vs Course Duration',
+            xaxis: {title: 'Course Duration (Hours)'},
+            yaxis: {title: 'Hours Spent'},
+            margin: {t: 50, b: 50, l: 60, r: 30}
+        });
+    </script>
+</body>
+</html> 
